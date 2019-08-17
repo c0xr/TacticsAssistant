@@ -2,6 +2,7 @@ package com.cory.tacticsassistant.fragments
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +16,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cory.tacticsassistant.R
 import com.cory.tacticsassistant.adapters.BasicItemListAdapter
 import com.cory.tacticsassistant.adapters.UpgradedItemListAdapter
-import com.cory.tacticsassistant.models.EquipItem
+import com.cory.tacticsassistant.models.BasicItem
+import com.cory.tacticsassistant.models.UpgradedItem
 import com.cory.tacticsassistant.other.SpacesItemDecoration
 
 class PreviewFragment: Fragment() {
-    private val mRepositoryList= MutableList<EquipItem?>(8){null}
+    private val mRepositoryList= MutableList<BasicItem?>(8){null}
     private var mRepositoryText:TextView?=null
     private var mWarningText:TextView?=null
     private var mAnimSet:AnimatorSet?=null
@@ -32,38 +34,47 @@ class PreviewFragment: Fragment() {
         mRepositoryText=view.findViewById(R.id.repository_textview)
         mWarningText=view.findViewById(R.id.warning_textview)
 
-        EquipItem.init(activity!!)
+        BasicItem.init(activity!!)
+        UpgradedItem.init(activity!!)
         mAnimSet=initAnim()
 
-        repositoryRecyclerView.adapter=BasicItemListAdapter(mRepositoryList, activity!!,null,this)
+        resultRecyclerView.adapter=UpgradedItemListAdapter(emptyList<UpgradedItem>().toMutableList(), activity!!)
+        resultRecyclerView.layoutManager=LinearLayoutManager(activity)
+
+        repositoryRecyclerView.adapter=BasicItemListAdapter(
+            mRepositoryList,
+            activity!!,
+            null,
+            resultRecyclerView.adapter as UpgradedItemListAdapter?,
+            this
+        )
         repositoryRecyclerView.layoutManager=GridLayoutManager(activity,2)
-        pickerRecyclerView.adapter=BasicItemListAdapter(getPickerList(), activity!!,
+
+        pickerRecyclerView.adapter=BasicItemListAdapter(
+            getPickerList(),
+            activity!!,
             repositoryRecyclerView.adapter as BasicItemListAdapter,
+            resultRecyclerView.adapter as UpgradedItemListAdapter?,
             this
         )
         pickerRecyclerView.layoutManager=GridLayoutManager(activity,2)
-        resultRecyclerView.adapter=UpgradedItemListAdapter(getPickerList(), activity!!)
-        resultRecyclerView.layoutManager=LinearLayoutManager(activity)
 
         val spacingInPixels= resources.getDimensionPixelSize(R.dimen.picker_inner_margin)
         repositoryRecyclerView.addItemDecoration(SpacesItemDecoration(spacingInPixels))
         pickerRecyclerView.addItemDecoration(SpacesItemDecoration(spacingInPixels))
+
         return view
     }
 
-    private fun getPickerList(): MutableList<EquipItem?> {
-        val list= emptyList<EquipItem?>().toMutableList()
-        list.add(EquipItem.initEquipment(EquipItem.Name.BF_SWORD))
-        list.add(EquipItem.initEquipment(EquipItem.Name.RECURVE_BOW))
-        list.add(EquipItem.initEquipment(EquipItem.Name.NEEDLESSLY_LARGE_ROD))
-        list.add(EquipItem.initEquipment(EquipItem.Name.TEAR_OF_THE_GODDESS))
-        list.add(EquipItem.initEquipment(EquipItem.Name.GIANT_S_BELT))
-        list.add(EquipItem.initEquipment(EquipItem.Name.CHAIN_VEST))
-        list.add(EquipItem.initEquipment(EquipItem.Name.NEGATRON_CLOAK))
-        list.add(EquipItem.initEquipment(EquipItem.Name.SPATULA))
+    private fun getPickerList(): MutableList<BasicItem?> {
+        val list= emptyList<BasicItem?>().toMutableList()
+        for (name in BasicItem.Name.values()){
+            list.add(BasicItem.initEquipment(name))
+        }
         return list
     }
 
+    @SuppressLint("ObjectAnimatorBinding")
     private fun initAnim():AnimatorSet{
         val set=AnimatorSet()
 

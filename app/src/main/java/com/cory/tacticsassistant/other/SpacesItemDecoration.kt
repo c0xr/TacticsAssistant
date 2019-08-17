@@ -1,12 +1,10 @@
 package com.cory.tacticsassistant.other
 
-import android.R.attr.top
-import android.R.attr.bottom
-import android.R.attr.right
-import android.R.attr.left
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.cory.tacticsassistant.models.BasicItem
+import com.cory.tacticsassistant.models.UpgradedItem
 
 
 class SpacesItemDecoration(private val space: Int) : RecyclerView.ItemDecoration() {
@@ -21,20 +19,18 @@ class SpacesItemDecoration(private val space: Int) : RecyclerView.ItemDecoration
             outRect.left = space/2
         }
 
+        if (parent.getChildLayoutPosition(view) <=1) {
+            outRect.top = space
+        } else {
+            outRect.top = 0
+        }
+
         if (parent.getChildLayoutPosition(view) %2==1) {
             outRect.right = space
         } else {
             outRect.right = space/2
         }
 
-
         outRect.bottom = space
-
-        // Add top margin only for the first item to avoid double space between items
-        if (parent.getChildLayoutPosition(view) <=1) {
-            outRect.top = space
-        } else {
-            outRect.top = 0
-        }
     }
 }

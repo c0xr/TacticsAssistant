@@ -12,18 +12,18 @@
             android:layout_height="50dp" android:gravity="center_vertical"
     >
         <ImageView android:layout_width="wrap_content" android:layout_height="match_parent"
-                   android:adjustViewBounds="true" app:srcCompat="@drawable/bf_sword"/>
+                   android:adjustViewBounds="true" app:srcCompat="@drawable/bf_sword" android:id="@+id/image_a"/>
 
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" android:layout_weight="1" android:gravity="center">
             <ImageView android:layout_width="wrap_content" android:layout_height="30dp"
-                       android:adjustViewBounds="true" app:srcCompat="@drawable/bf_sword"/>
+                       android:adjustViewBounds="true" app:srcCompat="@drawable/bf_sword" android:id="@+id/image_b"/>
             <ImageView android:layout_width="wrap_content" android:layout_height="30dp"
                        android:adjustViewBounds="true" app:srcCompat="@drawable/plus" android:padding="8dp"/>
             <ImageView android:layout_width="wrap_content" android:layout_height="30dp"
-                       android:adjustViewBounds="true" app:srcCompat="@drawable/bf_sword"/>
+                       android:adjustViewBounds="true" app:srcCompat="@drawable/bf_sword" android:id="@+id/image_c"/>
         </LinearLayout>
         <Button
                 android:text="预览"

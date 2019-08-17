@@ -9,18 +9,24 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cory.tacticsassistant.R
 import com.cory.tacticsassistant.fragments.PreviewFragment
-import com.cory.tacticsassistant.models.EquipItem
+import com.cory.tacticsassistant.models.BasicItem
+import com.cory.tacticsassistant.models.UpgradedItem
 
-class BasicItemHolder(itemView: View, private val mBasicItemListAdapter: BasicItemListAdapter?,
-                      private val mPreviewFragment: PreviewFragment) : RecyclerView.ViewHolder(itemView),View.OnClickListener{
-    private var mEquipItem: EquipItem? = null
+class BasicItemHolder(
+    itemView: View,
+    private val mBasicItemListAdapter: BasicItemListAdapter?,
+    private val mUpgradedItemListAdapter: UpgradedItemListAdapter?,
+    private val mPreviewFragment: PreviewFragment
+) : RecyclerView.ViewHolder(itemView),View.OnClickListener{
+
+    private var mBasicItem: BasicItem? = null
     private val mImageView:ImageView = itemView.findViewById(R.id.image)
     private val mTextView:TextView = itemView.findViewById(R.id.text)
 
-    fun bind(equipItem: EquipItem?){
-        mEquipItem=equipItem
-        mImageView.setImageBitmap(mEquipItem?.mImageBitmap?:EquipItem.sEmptyGridBitmap)
-        mTextView.text = mEquipItem?.mAmount.toString()
+    fun bind(basicItem: BasicItem?){
+        mBasicItem=basicItem
+        mImageView.setImageBitmap(mBasicItem?.mImageBitmap?:BasicItem.sEmptyGridBitmap)
+        mTextView.text = mBasicItem?.mAmount.toString()
         itemView.setOnClickListener(this)
     }
 
@@ -29,19 +35,29 @@ class BasicItemHolder(itemView: View, private val mBasicItemListAdapter: BasicIt
             val list= mBasicItemListAdapter.mList
             for(i in 0 until list.size){
                 if (list[i]==null){
-                    list[i]=mEquipItem
+                    list[i]=mBasicItem
                     mBasicItemListAdapter.notifyItemChanged(i)
-                    return
+                    break
+                }
+                else if (i==list.size-1){
+                    mPreviewFragment.startWarningAnim()
                 }
             }
-            mPreviewFragment.startWarningAnim()
+
+            mUpgradedItemListAdapter?.mList=UpgradedItem.getMatchedList(mBasicItemListAdapter.mList)
+            mUpgradedItemListAdapter?.notifyDataSetChanged()
         }
     }
 }
 
-class BasicItemListAdapter(val mList:MutableList<EquipItem?>, private val mContext:Context,
-                           private val mBasicItemListAdapter: BasicItemListAdapter?,
-                           private val mPreviewFragment: PreviewFragment) : RecyclerView.Adapter<BasicItemHolder>(){
+class BasicItemListAdapter(
+    val mList:MutableList<BasicItem?>,
+    private val mContext:Context,
+    private val mBasicItemListAdapter: BasicItemListAdapter?,
+    private val mUpgradedItemListAdapter: UpgradedItemListAdapter?,
+    private val mPreviewFragment: PreviewFragment
+) : RecyclerView.Adapter<BasicItemHolder>(){
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BasicItemHolder {
         val inflater=LayoutInflater.from(mContext)
         return BasicItemHolder(
@@ -51,6 +67,7 @@ class BasicItemListAdapter(val mList:MutableList<EquipItem?>, private val mConte
                 false
             ),
             mBasicItemListAdapter,
+            mUpgradedItemListAdapter,
             mPreviewFragment
         )
     }
