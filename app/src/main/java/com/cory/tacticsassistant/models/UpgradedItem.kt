@@ -178,19 +178,39 @@ class UpgradedItem private constructor(
                 }
             }
 
+            fun checkItem(itemName: Name):Boolean{
+                for(i in 0 until result.size){
+                    if(result[i].mUpgradedName==itemName){
+                        return true
+                    }
+                }
+                return false
+            }
+
             for(i in 0 until actualSize){
                 for (j in i + 1 until actualSize) {
+
                     Log.d("TAGG",i.toString()+" "+j)
-                    result.add(
-                        initEquipment(
-                            matchItems(
+                    val upgraded=matchItems(list[i]!!.mBasicName!!, list[j]!!.mBasicName!!)
+                    if(!checkItem(upgraded)){
+                        result.add(
+                            initEquipment(
+                                upgraded,
                                 list[i]!!.mBasicName!!,
                                 list[j]!!.mBasicName!!
-                            ),
-                            list[i]!!.mBasicName!!,
-                            list[j]!!.mBasicName!!
+                            )
                         )
-                    )
+                    }else{
+                        for(k in 0 until result.size){
+                            if(result[k].mUpgradedName==upgraded){
+                                result[k].mAmount++
+                                break
+                            }
+                        }
+                    }
+
+
+
                 }
             }
             return result
